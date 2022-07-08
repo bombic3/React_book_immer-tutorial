@@ -10,6 +10,10 @@ import produce from 'immer';
 - immer는 불변성을 유지하는 코드가 복잡할 때만 사용
  */
 
+/*
+  immer 와 useState의 함수형 업데이트 함께 활용하여 App 컴포넌트 수정
+*/
+
 // immer를 사용하지 않고 불변성 유지
 const App = () => {
   const nextId = useRef(1);
@@ -20,19 +24,16 @@ const App = () => {
   });
 
   // input 수정을 위한 함수
-  const onChange = useCallback(
-    e => {
+  const onChange = useCallback( e => {
       const { name, value } = e.target;
       setForm(
-        produce (form, draft => {
+        produce (draft => {
           draft[name] = value;
         })
         // ...form,
         // [name]: [value]
       );
-    },
-    [form]
-  );
+    },[]);
 
   // form 등록을 위한 함수
   const onSubmit = useCallback(
@@ -46,7 +47,7 @@ const App = () => {
 
       // array에 새 항목 등록
       setData(
-        produce(data, draft => {
+        produce(draft => {
           draft.array.push(info);
         })
         // ...data,
@@ -60,21 +61,21 @@ const App = () => {
       });
       nextId.current += 1;
     },
-    [data, form.name, form.username]
+    [form.name, form.username]
   );
 
   // 항목을 삭제하는 함수
   const onRemove = useCallback(
     id => {
       setData(
-        produce(data, draft => {
+        produce(draft => {
           draft.array.splice(draft.array.findIndex(info => info.id === id), 1);
         })
         // ...data,
         // array: data.array.filter(info => info.id !== id)
       );
     },
-    [data]
+    []
   );
 
   return (
